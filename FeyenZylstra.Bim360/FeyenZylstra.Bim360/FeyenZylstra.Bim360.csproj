@@ -15,6 +15,7 @@
     <Copyright>2017 Feyen Zylstra LLC</Copyright>
     <RepositoryUrl>https://github.com/feyenzylstra/fz-bim360-api</RepositoryUrl>
     <PackageTags>fz autodesk bim360 field api</PackageTags>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
