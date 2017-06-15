@@ -12,7 +12,7 @@ namespace FeyenZylstra.Bim360.Field
         [JsonProperty("max_date")]
         public string MaxDate { get; set; }
         [JsonProperty("filter_id")]
-        public string FilterId { get; set; }
+        public Guid FilterId { get; set; }
         [JsonProperty("offset")]
         public int Offset { get; set; }
         [JsonProperty("limit")]

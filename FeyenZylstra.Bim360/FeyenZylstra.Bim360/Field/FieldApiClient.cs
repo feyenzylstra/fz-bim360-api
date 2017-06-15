@@ -49,6 +49,22 @@ namespace FeyenZylstra.Bim360.Field
             }
         }
 
+        public async Task<IEnumerable<TaskFilter>> GetTaskFiltersAsync(Guid projectId)
+        {
+            var uri = new UriBuilder().Path("/fieldapi/admin/v1/filters").Build();
+            var request = new GetAdminFiltersRequest
+            {
+                Ticket = _ticket,
+                ProjectId = projectId,
+                Category = ContainerCategory.Task
+            };
+
+            var response = await _http.PostAsync(uri, await EncodeAsync(request));
+            var content = await DecodeAsync<List<TaskFilter>>(response);
+
+            return content;
+        }
+
         /// <summary>
         /// Attempts to authenticate with the mobile API using BIM 360 Field credentials. 
         /// </summary>
@@ -86,14 +102,14 @@ namespace FeyenZylstra.Bim360.Field
                 throw new FieldApiException("logout failed");
         }
 
-        public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId)
+        public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId, Guid filterId)
         {
             var result = new List<ProjectTask>();
             var offset = 0;
 
             while (true)
             {
-                var tasks = await GetTasksAsync(projectId, offset, 5);
+                var tasks = await GetTasksAsync(projectId, filterId, offset, 5);
                 if (!tasks.Any())
                     break;
                 offset += tasks.Count();
@@ -103,13 +119,14 @@ namespace FeyenZylstra.Bim360.Field
             return result;
         }
 
-        public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId, int offset, int limit)
+        public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId, Guid filterId, int offset, int limit)
         {
             var uri = new UriBuilder().Path("/api/get_tasks").Build();
             var request = new GetTasksRequest
             {
                 Ticket = _ticket,
                 ProjectId = projectId,
+                FilterId = filterId,
                 Offset = offset,
                 Limit = limit
             };
