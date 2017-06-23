@@ -119,6 +119,20 @@ namespace FeyenZylstra.Bim360.Field
             return result;
         }
 
+        public async Task<IEnumerable<User>> GetUsersAsync(Guid projectId)
+        {
+            var uri = new UriBuilder().Path("/fieldapi/admin/v1/users").Build();
+            var request = new GetUsersRequest() { Ticket = _ticket, ProjectId = projectId };
+
+            var response = await _http.PostAsync(uri, await EncodeAsync(request));
+
+            if (!response.IsSuccessStatusCode)
+                throw new FieldApiException("failed to retrieve users");
+
+            var content = await DecodeAsync<List<User>>(response);
+            return content;
+        }
+
         public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId, Guid filterId, int offset, int limit)
         {
             var uri = new UriBuilder().Path("/api/get_tasks").Build();
