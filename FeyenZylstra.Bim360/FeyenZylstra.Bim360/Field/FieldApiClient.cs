@@ -102,18 +102,23 @@ namespace FeyenZylstra.Bim360.Field
                 throw new FieldApiException("logout failed");
         }
 
-        public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId, Guid filterId)
+        public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId, Guid? filterId, PageOptions options = null)
         {
+            if (options == null)
+                options = PageOptions.GetDefault();
+
             var result = new List<ProjectTask>();
-            var offset = 0;
+            var offset = options.Offset;
 
             while (true)
             {
-                var tasks = await GetTasksAsync(projectId, filterId, offset, 5);
+                var tasks = await GetTasksAsync(projectId, filterId, offset, options.BatchSize);
                 if (!tasks.Any())
                     break;
                 offset += tasks.Count();
                 result.AddRange(tasks);
+                if (options.Limit != 0 && offset >= options.Limit)
+                    break;
             }
 
             return result;
@@ -133,7 +138,7 @@ namespace FeyenZylstra.Bim360.Field
             return content;
         }
 
-        public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId, Guid filterId, int offset, int limit)
+        public async Task<IEnumerable<ProjectTask>> GetTasksAsync(Guid projectId, Guid? filterId, int offset, int limit)
         {
             var uri = new UriBuilder().Path("/api/get_tasks").Build();
             var request = new GetTasksRequest
