@@ -13,7 +13,7 @@ namespace FeyenZylstra.Bim360.Field
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("default_issue_due_date")]
-        public DateTime? DefaultIssueDueDate { get; set; }
+        public int? DefaultIssueDueDate { get; set; }
         [JsonProperty("issue_workflow_rule")]
         public string IssueWorkflowRule { get; set; }
         [JsonProperty("is_active")]

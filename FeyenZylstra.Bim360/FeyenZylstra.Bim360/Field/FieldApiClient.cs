@@ -49,6 +49,21 @@ namespace FeyenZylstra.Bim360.Field
             }
         }
 
+        public async Task<IEnumerable<Company>> GetCompaniesAsync(Guid projectId)
+        {
+            var uri = new UriBuilder().Path("/fieldapi/admin/v1/companies").Build();
+            var request = new GetCompaniesRequest()
+            {
+                Ticket = _ticket,
+                ProjectId = projectId
+            };
+
+            var response = await _http.PostAsync(uri, await EncodeAsync(request));
+            var content = await DecodeAsync<List<Company>>(response);
+
+            return content;
+        }
+
         public async Task<IEnumerable<TaskFilter>> GetTaskFiltersAsync(Guid projectId)
         {
             var uri = new UriBuilder().Path("/fieldapi/admin/v1/filters").Build();
